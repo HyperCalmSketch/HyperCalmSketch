@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 #include <random>
 
@@ -197,7 +198,7 @@ public:
 	}
 
 
-	vector<pair<pair<int, int16_t>, int>> get_top_k(int k) {
+	vector<pair<pair<int, int16_t>, int>> get_top_k(int k) const {
 		vector<pair<pair<int, int16_t>, int>> ans(k);
 
 		SS_Node* idx = SS_nodes[0].val_next;

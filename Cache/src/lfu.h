@@ -1,6 +1,10 @@
 #ifndef _LFU_H_
 #define _LFU_H_
 
+#include <string>
+#include <map>
+#include <unordered_map>
+
 class LFU {
 public:
     typedef typename multimap<int, string>::iterator lfuIterator;

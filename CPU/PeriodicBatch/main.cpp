@@ -1,124 +1,101 @@
-#include <string.h>
-#include <cstdint>
 #include <cstdlib>
-#include <assert.h>
+#include <cassert>
+#include <ctime>
+#include <iostream>
 #include <vector>
-#include <map>
-#include <unordered_map>
-#include <list>
-#include <string.h>
+
 using namespace std;
 
-#include <boost/program_options.hpp>
-
-#include "../datasets/trace.h"
 #include "../ComparedAlgorithms/ClockUSS.h"
-#include "../HyperCalm/HyperCalm.h"
+#include "../HyperCalm/basic/HyperCalm_Basic.h"
+#include "../HyperCalm/bucketized/HyperCalm.h"
 #include "../ComparedAlgorithms/groundtruth.h"
 
-using namespace boost::program_options;
+using namespace groundtruth::type_info;
 
-string fileName;
-int sketchName;
-double BATCH_TIME, UNIT_TIME;
-int repeat_time = 1, TOPK_THERSHOLD = 200, memory = 5e5;
+#include "params.h"
 
-void ParseArgs(int argc, char** argv) {
-	options_description opts("Options");
-	opts.add_options()
-		("fileName,f", value<string>()->required(), "file name")
-		("sketchName,s", value<int>()->required(), "sketch name")
-		("time,t", value<int>()->required(), "repeat time")
-		("topk,k", value<int>()->required(), "topk")
-		("memory,m", value<int>()->required(), "memory")
-		("batch_time,b", value<double>()->required(), "batch time")
-		("unit_time,u", value<double>()->required(),"unit time");
-	variables_map vm;
+extern void ParseArgs(int argc, char** argv);
+extern vector<pair<uint32_t, float>> load_data(const string& fileName);
 
-	store(parse_command_line(argc, argv, opts), vm);
-	if (vm.count("fileName")) {
-		fileName = vm["fileName"].as<string>();
-	} else {
-		printf("please use -f to specify the path of dataset.\n");
-		exit(0);
-	}
-	if (vm.count("sketchName")) {
-		sketchName = vm["sketchName"].as<int>();
-		if (sketchName < 1 || sketchName > 2) {
-			printf("sketchName < 1 || sketchName > 2\n");
-			exit(0);
-		}
-	} else {
-		printf("please use -s to specify the name of sketch.\n");
-		exit(0);
-	}
-	if (vm.count("time"))
-		repeat_time = vm["time"].as<int>();
-	if (vm.count("topk"))
-		TOPK_THERSHOLD = vm["topk"].as<int>();
-	if (vm.count("memory"))
-		memory = vm["memory"].as<int>();
-	if (vm.count("batch_time"))
-		BATCH_TIME = vm["batch_time"].as<double>();
-	if (vm.count("unit_time"))
-		UNIT_TIME = vm["unit_time"].as<double>();
+template <bool use_counter>
+void periodic_size_test(
+    const vector<Record>& input,
+    vector<pair<PeriodicKey, int>>& ans
+) {
+    printName(sketchName);
+    sort(ans.begin(), ans.end());
+    vector<pair<PeriodicKey, int>> our;
+    int corret_count = 0,cc=0,pc=0;
+    double sae = 0, sre = 0;
+    uint64_t time_ns = 0;
+    auto check = [&] (auto sketch) {
+        timespec start, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        int k=0,i=0;
+        for (auto &[key, time] : input) {
+            sketch.template insert_filter(key, time, BATCH_SIZE_LIMIT);
+        }
+        our = sketch.get_top_k(TOPK_THRESHOLD);
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        time_ns += (end.tv_sec - start.tv_sec) * 1e9 + (end.tv_nsec - start.tv_nsec);
+        sort(our.begin(), our.end());
+        int j = 0;
+        for (auto &[key, freq] : our) {
+            while (j + 1 < ans.size() && ans[j].first < key)
+                ++j;
+            if (j < ans.size() && ans[j].first == key) {
+                ++corret_count;
+                auto diff = abs(ans[j].second - freq);
+                //cerr<<freq<<" "<<ans[j].second<<endl;
+                sae += diff;
+                sre += diff / double(ans[j].second);
+            }
+        }
+    };
+    for (int t = 0; t < repeat_time; ++t) {
+        if (sketchName == 1)
+            check(HyperCalm(BATCH_TIME, UNIT_TIME, memory, t));
+        if (sketchName == 2)
+            check(HyperCalm_Basic(BATCH_TIME, UNIT_TIME, memory, t));
+        else if (sketchName == 3)
+            check(ClockUSS<use_counter>(BATCH_TIME, UNIT_TIME, memory, t));
+    }
+    cout << "---------------------------------------------" << endl;
+    if constexpr (use_counter)
+        cout << "Results with counter:" << endl;
+    else
+        cout << "Results without counter:" << endl;
+    cout << "Average Speed:\t " << 1e3 * input.size() * repeat_time / time_ns << " M/s" << endl;
+    cout << "Recall Rate:\t " << 1.0 * corret_count / ans.size() / repeat_time << endl;
+    cout << "AAE:\t\t " << sae / corret_count << endl;
+    cout << "ARE:\t\t " << sre / corret_count << endl;
 }
+
+void size_test(const vector<pair<uint32_t, float>>& input) {
+    groundtruth::item_count(input);
+    groundtruth::adjust_params(input, BATCH_TIME, UNIT_TIME);
+    vector<int> batche = groundtruth::batch(input, BATCH_TIME, BATCH_SIZE_LIMIT).first;
+    auto ans = groundtruth::topk(input, batche, UNIT_TIME, TOPK_THRESHOLD);
+    printf("BATCH_TIME = %f, UNIT_TIME = %f\n", BATCH_TIME, UNIT_TIME);
+    if (memory > 1000)
+        cout << "Total Memory: " << memory / 1000. << " KB";
+    else
+        cout << "Total Memory: " << memory << " B";
+    cout << ", Top K: " << TOPK_THRESHOLD << '\n';
+    cout << "---------------------------------------------" << '\n';
+    periodic_size_test<true>(input, ans);
+    // cout << "---------------------------------------------" << endl;
+    // periodic_size_test<false>(input, ans);
+    cout << "---------------------------------------------" << endl;
+}
+
 
 int main(int argc, char** argv) {
 	ParseArgs(argc, argv);
 	printf("---------------------------------------------\n");
-	vector<pair<uint32_t, float>> input;
-	if (fileName.back() == 't')
-		input = loadCAIDA(fileName.c_str());
-	else
-		input = loadCRITEO(fileName.c_str());
+	auto input = load_data(fileName);
 	printf("---------------------------------------------\n");
-	auto ans = groundtruth(input, BATCH_TIME, UNIT_TIME, TOPK_THERSHOLD).second;
-	printf("BATCH_TIME = %f\n", BATCH_TIME);
-	printf("---------------------------------------------\n");
-	if (sketchName == 1) {
-		puts("Test HyperCalm");
-	} else {
-		puts("Test Clock+USS");
-	}
-	sort(ans.begin(), ans.end());
-	int corret_count = 0;
-	double sae = 0, sre = 0;
-	auto check = [&](auto sketch) {
-		for (int i = 0; i < (int)input.size(); ++i) {
-			auto pr = input[i];
-			auto tkey = pr.first;
-			auto ttime = pr.second;
-			sketch.insert(tkey, ttime);
-		}
-		auto our = sketch.get_top_k(TOPK_THERSHOLD);
-		sort(our.begin(), our.end());
-		int j = 0;
-		for (auto x: our) {
-			while (j + 1 < int(ans.size()) && ans[j].first < x.first)
-				++j;
-			if (j < int(ans.size()) && ans[j].first == x.first) {
-				++corret_count;
-				sae += abs(ans[j].second - x.second);
-				sre += abs(ans[j].second - x.second) / double(ans[j].second);
-			}
-		}
-	};
-	timespec start_time, end_time;
-	clock_gettime(CLOCK_MONOTONIC, &start_time);
-	for (int t = 0; t < repeat_time; ++t) {
-		if (sketchName == 1)
-			check(HyperCalm(BATCH_TIME, UNIT_TIME, memory, t));
-		else
-			check(ClockUSS(BATCH_TIME, UNIT_TIME, memory, t));
-	}
-	clock_gettime(CLOCK_MONOTONIC, &end_time);
-	uint64_t time_ns = uint64_t(end_time.tv_sec - start_time.tv_sec) * 1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
-	printf("---------------------------------------------\n");
-	printf("Results:\n");
-	printf("Average Speed:\t %f M/s\n", 1e3 * input.size() * repeat_time / time_ns);
-	printf("Recall Rate:\t %f\n", 1.0 * corret_count / ans.size() / repeat_time);
-	printf("AAE:\t\t %f\n", sae / corret_count);
-	printf("ARE:\t\t %f\n", sre / corret_count);
+	size_test(input);
 	printf("---------------------------------------------\n");
 }

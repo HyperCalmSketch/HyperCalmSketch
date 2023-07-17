@@ -1,18 +1,19 @@
-#include <string.h>
-#include <cstdint>
+#include <cstring>
 #include <cstdlib>
-#include <assert.h>
+#include <cstdio>
+#include <ctime>
+#include <cassert>
 #include <vector>
-#include <map>
-#include <unordered_map>
-#include <list>
-#include <string.h>
+#include <set>
+
 using namespace std;
+
 const int TOPK_THRESHOLD = 100;
 const double BATCH_TIME_THRESHOLD = 0.727 / 5e4;
 const double UNIT_TIME = BATCH_TIME_THRESHOLD * 10;
 const double addpre = UNIT_TIME * 30;
-#include "../../CPU/ComparedAlgorithms/clockSketch.h"
+
+#include "../../CPU/ComparedAlgorithms/ClockSketch.h"
 #include "../../CPU/ComparedAlgorithms/groundtruth.h"
 #include "../../CPU/HyperCalm/HyperBloomFilter.h"
 #include "CalmSpaceSavingCache.h"
@@ -57,7 +58,7 @@ void check_css(char* filename, int sz, int cachesize) {
 	int c_size = max(1, min(memory2 / 1500, 2000)),
 		q_size = max(1, min(memory2 / 1000, 1000));
 	auto ss = (Id==2 || Id==5) ? new CalmSpaceSavingCache(BATCH_TIME_THRESHOLD, UNIT_TIME, memory2 - memory1, 7, q_size, c_size) : NULL;
-	auto base = (Id==4) ? new clockSketch(memory2, BATCH_TIME_THRESHOLD) : NULL;
+	auto base = (Id==4) ? new ClockSketch(memory2, BATCH_TIME_THRESHOLD) : NULL;
 	LRU lru(cachesize);
 	LRU lrupre(cachesize);
 	LFU lfu(cachesize);

@@ -1,6 +1,12 @@
 #ifndef _HASHTABLE_H_
 #define _HASHTABLE_H_
 
+#include <cassert>
+
+int operator % (pair<uint32_t, uint16_t> A, int B){
+    return (A.first + A.second) % B;
+}
+
 #define Mod(x) ((x%n+n)%n)
 template<typename key_t, typename val_t>
 class Hash_table{
@@ -14,7 +20,7 @@ public:
         val_t second;
     };
     Node *nodes;
-    Hash_table(int _n):n(_n),pool_n(_n){
+    Hash_table(int _n = 30000000):n(_n),pool_n(_n){
         head = new int [n];
         nodes = new Node [n];
         pool = new int [n];

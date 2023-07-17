@@ -1,6 +1,10 @@
 #ifndef _LRU_H_
 #define _LRU_H_
 
+#include <string>
+#include <list>
+#include <unordered_map>
+
 class LRU {
 public:
     typedef typename std::pair<string, int> key_value_pair_t;

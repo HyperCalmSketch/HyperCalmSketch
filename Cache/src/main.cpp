@@ -1,19 +1,17 @@
-#include <string.h>
-#include <cstdint>
+#include <cstring>
 #include <cstdlib>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
 #include <vector>
-#include <map>
-#include <unordered_map>
+#include <set>
 #include <list>
-#include <string.h>
 using namespace std;
-static int TOPK_THRESHOLD = 100;
+
 static double BATCH_TIME_THRESHOLD = 0.727 / 5e4;
 static double UNIT_TIME = BATCH_TIME_THRESHOLD * 10;
 const double addpre = UNIT_TIME * 30;
 
-#include "../../CPU/ComparedAlgorithms/clockSketch.h"
+#include "../../CPU/ComparedAlgorithms/ClockSketch.h"
 #include "../../CPU/ComparedAlgorithms/groundtruth.h"
 #include "../../CPU/HyperCalm/HyperBloomFilter.h"
 #include "CalmSpaceSavingCache.h"
@@ -42,7 +40,7 @@ vector<pair<uint32_t, float>> loaddata(char* filename) {
 }
 void check_css(char* filename, int sz, int cachesize) {
 	vector<pair<uint32_t, float>> input = loaddata(filename);
-	groundtruth(input, BATCH_TIME_THRESHOLD, UNIT_TIME, TOPK_THRESHOLD);
+	groundtruth::adjust_params(input, BATCH_TIME_THRESHOLD, UNIT_TIME);
 	puts("(* Each item is a memory access request.)");
 	//    puts("read over");
 	printf("Finish reading %s\n", filename);
@@ -55,7 +53,7 @@ void check_css(char* filename, int sz, int cachesize) {
 	int c_size = max(1, min(memory2 / 1500, 2000)),
 		q_size = max(1, min(memory2 / 1000, 1000));
 	auto ss = new CalmSpaceSavingCache(BATCH_TIME_THRESHOLD, UNIT_TIME, memory2 - memory1, 7, q_size, c_size);
-	auto base = new clockSketch(memory2, BATCH_TIME_THRESHOLD / 30);
+	auto base = new ClockSketch(memory2, BATCH_TIME_THRESHOLD / 30);
 	LRU lru(cachesize);
 	LRU lrupre(cachesize);
 	LFU lfu(cachesize);
