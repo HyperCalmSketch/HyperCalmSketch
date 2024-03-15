@@ -13,6 +13,7 @@ Experimental results show that Bucketized HyperCalm well achieves our design goa
 - `PeriodicBatch`: Source codes for finding top-k periodic batches.  
 - `TopK`: Source codes for finding top-k items.
 - `lib`: The hash table, hash function, and some common functions used by many algorithms. 
+- `Variable`: Source codes for Variable HyperBF and HyperCalm.
 
 ## Dependency 
 
@@ -24,7 +25,7 @@ Experimental results show that Bucketized HyperCalm well achieves our design goa
 
 ## How to run
 
-Please enter the folder `PeriodicBatch`, `Batch`, and `TopK` to run the experiments in finding periodic batches, item batches, and top-k items, respectively. 
+Please enter the folder `PeriodicBatch`, `Batch`, `TopK` and `Variable` to run the experiments in finding periodic batches, item batches, and top-k items, respectively. 
 
 More details can be found in the folders. 
 

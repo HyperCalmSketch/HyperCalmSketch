@@ -25,9 +25,9 @@ $ ./periodic_batch_test -f FILENAME -s {1-3} [-t REPEAT_TIME] [-k TOPK] [-l LIMI
 
 2. `-s`: An integer(1-3), specifying the algorithm you want to test. The corresponding relationship is as follows. 
 
-   | 1               | 2                    | 3         |
-   | --------------- | -------------------- | --------- |
-   | HYPERCALM_BASIC | HYPERCALM_BUCKETIZED | CLOCK_USS |
+   | 1                    | 2               | 3         |
+   | -------------------- |---------------  | --------- |
+   | HYPERCALM_BUCKETIZED | HYPERCALM_BASIC | CLOCK_USS |
 
 3. `-t`: An integer, specifying the number of repetitions of each execution. The default value is 1.
 
