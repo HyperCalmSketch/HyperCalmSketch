@@ -1,4 +1,4 @@
-# Codes for Variable HyperBF
+# Codes for Dynamic HyperBF
 
 We implemented dynamic version of HyperBF, and tested its performance with different number of memory expansions/compressions. The experimental results demonstrate that the dynamic version of HyperBF still maintains similar performances in terms of both accuracy and processing speed as the normal version of HyperBF.
 

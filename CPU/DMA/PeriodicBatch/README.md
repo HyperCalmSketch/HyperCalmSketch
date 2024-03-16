@@ -1,4 +1,4 @@
-# Codes for Variable HyperCalm
+# Codes for Dynamic HyperCalm
 
 We implemented dynamic version of Bucketized HyperCalm, and tested its performance with different number of memory expansions/compressions. The experimental results demonstrate that the dynamic version of Bucketized HyperCalm still maintains similar performances in terms of both accuracy and processing speed as the normal version of Bucketized HyperCalm.
 
