@@ -1,8 +1,8 @@
 # Codes on CPU Platform 
 
-We conduct CPU experiments to compare the performance of Buckerized HyperCalm, Basic HyperCalm and a strawman solution (Clock-Sketch + Unbiased Space-Saving) in finding periodic batches. We compare the performance of HyperBF, Clock-Sketch, Time-Out Bloom filter, and SWAMP in detecting item batches, and experimented with filtering out small batches by adding counters to HyperBF.And we compare the performance of Bucketized CalmSS, Basic Calmss, Space-Saving, Unbiased Space-Saving (USS) and Cold-Filter + SS (CF+SS) in finding top-k items. We also implemented HyperCalm in redis and tested its speed.
+We conduct CPU experiments to compare the performance of Buckerized HyperCalm, Basic HyperCalm and a strawman solution (Clock-Sketch + Unbiased Space-Saving) in finding periodic batches. We compare the performance of HyperBF, Clock-Sketch, Time-Out Bloom filter, and SWAMP in detecting item batches, and experimented with filtering out small batches by adding counters to HyperBF.And we compare the performance of Bucketized CalmSS, Basic Calmss, Space-Saving, Unbiased Space-Saving (USS) and Cold-Filter + SS (CF+SS) in finding top-k items. We also implemented Dynamic Bucketized HyperCalm and tested its performance.
 
-Experimental results show that Bucketized HyperCalm well achieves our design goal. Bucketized HyperCalm outperforms the Basic HyperCalm 14.1 times in term of average relative error and 1.6 times in term of processing speed, when Basic HyperCalm outperforms the strawman solutions 4 times in term of average relative error and 13.2 times in term of processing speed. Besides, we find that both HyperBF and Bucketized CalmSS, significantly outperform the state-of-the-art solutions in detecting item batches and finding top-k items, respectively. Our experiments are conducted on an 18-core CPU server (Intel i9-10980XE) with 128GB DDR4 memory and 24.75MB L3 cache. We set the CPU frequency to 4.2GHz and set the memory frequency to 3200MHz. 
+Experimental results show that Bucketized HyperCalm well achieves our design goal. Bucketized HyperCalm outperforms the Basic HyperCalm 14.1 times in term of average relative error and 1.6 times in term of processing speed, when Basic HyperCalm outperforms the strawman solutions 4 times in term of average relative error and 13.2 times in term of processing speed. Besides, we find that both HyperBF and Bucketized CalmSS, significantly outperform the state-of-the-art solutions in detecting item batches and finding top-k items, respectively. In addition, HyperBF/HyperCalm can flexibly manage the trade-off between accuracy and memory usage through memory tuning operations, and HyperBF/HyperCalm's memory tuning operations can be efficiently completed in milliseconds. Our experiments are conducted on an 18-core CPU server (Intel i9-10980XE) with 128GB DDR4 memory and 24.75MB L3 cache. We set the CPU frequency to 4.2GHz and set the memory frequency to 3200MHz. 
 
 
 ## File Structure 
@@ -13,7 +13,7 @@ Experimental results show that Bucketized HyperCalm well achieves our design goa
 - `PeriodicBatch`: Source codes for finding top-k periodic batches.  
 - `TopK`: Source codes for finding top-k items.
 - `lib`: The hash table, hash function, and some common functions used by many algorithms. 
-- `Variable`: Source codes for Variable HyperBF and HyperCalm.
+- `DMA`: Source codes for Dynamic HyperBF and HyperCalm.
 
 ## Dependency 
 
@@ -25,7 +25,7 @@ Experimental results show that Bucketized HyperCalm well achieves our design goa
 
 ## How to run
 
-Please enter the folder `PeriodicBatch`, `Batch`, `TopK` and `Variable` to run the experiments in finding periodic batches, item batches, and top-k items, respectively. 
+Please enter the folder `PeriodicBatch`, `Batch`, `TopK` and `DMA` to run the experiments in finding periodic batches, item batches, and top-k items, respectively. 
 
 More details can be found in the folders. 
 

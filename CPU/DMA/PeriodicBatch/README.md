@@ -1,6 +1,6 @@
 # Codes for Variable HyperCalm
 
-We implemented a variable version of Bucketized HyperCalm, and tested its performance with different number of memory expansions/compressions. The experimental results demonstrate that the variable version of Bucketized HyperCalm still maintains similar performances in terms of both accuracy and processing speed as the normal version of Bucketized HyperCalm.
+We implemented dynamic version of Bucketized HyperCalm, and tested its performance with different number of memory expansions/compressions. The experimental results demonstrate that the dynamic version of Bucketized HyperCalm still maintains similar performances in terms of both accuracy and processing speed as the normal version of Bucketized HyperCalm.
 
 ## How to run
 
@@ -19,7 +19,7 @@ $ ./periodic_batch_test -f FILENAME -v {1-2} [-t REPEAT_TIME] [-k TOPK] [-r RATE
 
 1. `-f`: Path of the dataset you want to run.
 
-2. `-v`: An integer(1-2), specifying the variable type you want to test. The corresponding relationship is as follows. 
+2. `-v`: An integer(1-2), specifying the dynamic type you want to test. The corresponding relationship is as follows. 
 
    | 1        | 2      |
    | -------- | ------ | 
