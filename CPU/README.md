@@ -13,7 +13,7 @@ Experimental results show that Bucketized HyperCalm well achieves our design goa
 - `PeriodicBatch`: Source codes for finding top-k periodic batches.  
 - `TopK`: Source codes for finding top-k items.
 - `lib`: The hash table, hash function, and some common functions used by many algorithms. 
-- `DMA`: Source codes for Dynamic HyperBF and HyperCalm.
+- `DMA`: Source codes of the Dynamic Memory Adjustment operations of HyperBF and Bucketized HyperCalm
 
 ## Dependency 
 

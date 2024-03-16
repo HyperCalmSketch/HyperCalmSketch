@@ -1,6 +1,6 @@
 # Codes on CPU Platform 
 
-In practice, the density of data streams and the availablememory resources might vary dynamically. It is desirable to perform on-the-fly reconfiguration on the sketchsize to adapt to these dynamic variations. Towards thisgoal,we implemented the dynamic memory adjustment operations for HyperBF and Bucketized TimeRecorder/LRU-Queue/Space-Saving,by which we can dynamically com-press and expand their sizes by any integer factor. Theseoperations allow us to dynamically adjust the memory:for HyperCalm sketch without losing the previusageously recorded information. 
+In practice, the density of data streams and the available memory resources might vary dynamically. It is desirable to perform on-the-fly reconfiguration on the sketchsize to adapt to these dynamic variations. Towards this goal,we implemented the dynamic memory adjustment operations for HyperBF and Bucketized TimeRecorder/LRU-Queue/Space-Saving, by which we can dynamically compress and expand their sizes by any integer factor. These operations allow us to dynamically adjust the memory: for HyperCalm sketch without losing the previously recorded information. 
 
 Experimental results show that HyperBF/HyperCalm can flexibly manage the trade-off between its accuracy and memory usage via the memory adjustment operations, and the memory adjustment operations of HyperBF/HyperCalm can be efficiently completed within milliseconds.
 

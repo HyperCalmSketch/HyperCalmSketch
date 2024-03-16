@@ -4,8 +4,7 @@
 ## Introduction
 
 
-Batch is an important pattern in data streams, which refers to a group of identical items that arrive closely. We find that some special batches that arrive periodically are of great value. In this paper, we formally define a new pattern, namely periodic batches. A group of periodic batches refers to several batches of the same item, where these batches arrive periodically. Studying periodic batches is important in many applications, such as caches, financial markets, online advertisements, networks, etc. We propose a one-pass sketching algorithm, namely the HyperCalm sketch, which takes two phases to detect periodic batches in real time. In phase 1, we propose a time-aware Bloom filter, namely HyperBloomFilter (HyperBF), to detect the start of batches. In phase 2, we propose an enhanced top-k algorithm, called Calm Space-Saving (CalmSS), to report topk periodic batches. Further, we used a bucketized approach to unify the algorithm and further optimize the performance, the optimized algorithm is called Bucketized HyperCalm. We theoretically derive the error bounds for HyperBF and CalmSS. Extensive experimental results show that Bucketized HyperCalm well achieves our design goal. Bucketized HyperCalm outperforms the Basic HyperCalm 14.1 times in term of average relative error and 1.6 times in term of processing speed, when Basic HyperCalm outperforms the strawman solutions 4 times in term of average relative error and 13.2 times in term of processing speed. We appliction Bucketized HyperCalm in network measurement and compare it to Basic HyperCalm. We appliction Dynamic Bucketized HyperCalm in network measuremen and test its performence. We test the speed of HyperCalm in Redis. We also apply HyperCalm to a cache system and integrate HyperCalm into Apache Flink. 
-
+Batch is an important pattern in data streams, which refers to a group of identical items that arrive closely. We find that some special batches that arrive periodically are of great value. In this paper, we formally define a new pattern, namely periodic batches. A group of periodic batches refers to several batches of the same item, where these batches arrive periodically. Studying periodic batches is important in many applications, such as caches, financial markets, online advertisements, networks, etc. This paper proposes a unified framework, namely the HyperCalm sketch, to detect batch and periodic batch in data streams. HyperCalm sketch takes two phases to detect periodic batches. In phase 1, we propose a time-aware Bloom filter, called HyperBloomFilter (HyperBF), to detect batches. In phase 2, we propose an enhanced top-k algorithm, called Calm Space-Saving (CalmSS), to report top-k periodic batches. Extensive experiments show HyperCalm outperforms the strawman solutions 4× in term of average relative error and 98.1× in term of speed. All related codes are open-sourced.
 
 
 ## About this repo
@@ -16,7 +15,7 @@ Batch is an important pattern in data streams, which refers to a group of identi
   - `Batch`: Source codes for detecting item batches. 
   - `PeriodicBatch`: Source codes for finding top-k periodic batches.  
   - `TopK`: Source codes for finding top-k items.
-  - `DMA`: Source codes for Dynamic HyperBF and Bucketized HyperCalm.
+  - `DMA`: Source codes of the Dynamic Memory Adjustment operations of HyperBF and Bucketized HyperCalm
   - `lib`: The hash table, hash function, and some common functions used by many algorithms. 
 - `datasets`: Sample datasets extracted from the real-world datasets used in our CPU, Measurement and Redis experiments.
 - `Measurement`: Source codes for finding Delay and Loss.
